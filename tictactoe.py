@@ -13,9 +13,7 @@ def initial_state():
     """
     Returns starting state of the board.
     """
-    return [[EMPTY, EMPTY, EMPTY],
-            [EMPTY, EMPTY, EMPTY],
-            [EMPTY, EMPTY, EMPTY]]
+    return [[EMPTY, EMPTY, EMPTY], [EMPTY, EMPTY, EMPTY], [EMPTY, EMPTY, EMPTY]]
 
 
 def player(board):
@@ -25,16 +23,22 @@ def player(board):
     X_Count = sum(row.count(X) for row in board)
     O_Count = sum(row.count(O) for row in board)
 
-    if(X_Count > O_Count):
+    if X_Count > O_Count:
         return O
     else:
         return X
+
 
 def actions(board):
     """
     Returns set of all possible actions (i, j) available on the board.
     """
-    raise NotImplementedError
+    possible_actions = set()
+    for i in range(3):
+        for j in range(3):
+            if board[i][j] == EMPTY:
+                possible_actions.add((i, j))
+    return possible_actions
 
 
 def result(board, action):
