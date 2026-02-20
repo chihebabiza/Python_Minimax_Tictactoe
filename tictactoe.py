@@ -97,7 +97,7 @@ def winner(board):
         return board[0][0]
 
     if board[0][2] == board[1][1] == board[2][0] != EMPTY:
-        return board[0][2]  
+        return board[0][2]
 
     return None
 
@@ -143,38 +143,47 @@ def minimax(board):
     turn = player(board)
     best_action = None
 
-    def evaluate(state):
-        validate_board(state)
-
+    def max_value(state, alpha, beta):
         if terminal(state):
             return utility(state)
-
-        current = player(state)
-        scores = []
-
+        v = -math.inf
         for action in actions(state):
-            next_state = result(state, action)
-            score = evaluate(next_state)
-            scores.append(score)
+            v = max(v, min_value(result(state, action), alpha, beta))
+            if v >= beta:
+                return v
+            alpha = max(alpha, v)
+        return v
 
-        if current == X:
-            return max(scores)
-        else:
-            return min(scores)
+    def min_value(state, alpha, beta):
+        if terminal(state):
+            return utility(state)
+        v = math.inf
+        for action in actions(state):
+            v = min(v, max_value(result(state, action), alpha, beta))
+            if v <= alpha:
+                return v
+            beta = min(beta, v)
+        return v
 
     if turn == X:
         best_score = -math.inf
+        alpha = -math.inf
+        beta = math.inf
         for action in actions(board):
-            score = evaluate(result(board, action))
+            score = min_value(result(board, action), alpha, beta)
             if score > best_score:
                 best_score = score
                 best_action = action
+            alpha = max(alpha, best_score)
     else:
         best_score = math.inf
+        alpha = -math.inf
+        beta = math.inf
         for action in actions(board):
-            score = evaluate(result(board, action))
+            score = max_value(result(board, action), alpha, beta)
             if score < best_score:
                 best_score = score
                 best_action = action
+            beta = min(beta, best_score)
 
     return best_action
